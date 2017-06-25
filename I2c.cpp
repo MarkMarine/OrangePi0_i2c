@@ -6,6 +6,7 @@
 #include <cstdio>
 #include "gpio_lib.h"
 
+using namespace std;
 
 I2c::I2c(unsigned int SCL_, unsigned int SDA_) :
         SCL(SCL_), SDA(SDA_)
@@ -39,6 +40,7 @@ void I2c::startBit(void)
     sunxi_gpio_output(SCL, HIGH);
     delay();
     sunxi_gpio_set_cfgpin(SDA, OUTPUT);
+
     sunxi_gpio_output(SDA, HIGH);
     delay();
     sunxi_gpio_output(SDA, LOW);
@@ -145,7 +147,7 @@ void I2c::send(uint8_t address, uint8_t reg, uint8_t *buf, size_t len)
     uint8_t write = address << 1; // Write address
     size_t addLen = 1;
 
-    std::lock_guard<std::mutex> guard(comms_mutex);
+    lock_guard<mutex> guard(comms_mutex);
     startBit();
     int ack = tx(&write, addLen);
     //if (!ack) printf("ACK failed!\n"); // TODO should raise exception here
@@ -162,7 +164,7 @@ uint8_t I2c::receive8(uint8_t address, uint8_t reg)
     uint8_t read = write + (uint8_t )1; // read address, final bit turned on
     size_t len = 1;
 
-    std::lock_guard<std::mutex> guard(comms_mutex);
+    lock_guard<mutex> guard(comms_mutex);
     startBit();
     // Address the board (write)
     tx(&write, len);
@@ -186,7 +188,7 @@ uint16_t I2c::receive16(uint8_t address, uint8_t reg)
 
     size_t len = 1;
 
-    std::lock_guard<std::mutex> guard(comms_mutex);
+    lock_guard<mutex> guard(comms_mutex);
     startBit();
     tx(&write, len); // send the address
     tx(&reg, len); // send the register we want to read
