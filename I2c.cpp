@@ -23,8 +23,7 @@ bool I2c::init(void)
 
     sunxi_gpio_set_cfgpin(SCL, OUTPUT);
     sunxi_gpio_set_cfgpin(SDA, OUTPUT);
-    printf("init finished\n");
-
+    printf("I2c init finished\n");
     return true;
 }
 

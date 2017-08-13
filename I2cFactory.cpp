@@ -17,7 +17,7 @@ shared_ptr<I2c> I2cFactory::create_I2c(unsigned int scl, unsigned int sda) {
     auto i2c = make_shared<I2c>(scl, sda);
     i2c.reset(new I2c(scl, sda));
 
-    if (i2c->init() != 0) {
+    if (!i2c->init()) {
         err(1, "i2c->init() failed");
         return NULL;
     }
